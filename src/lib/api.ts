@@ -1,21 +1,26 @@
-import axios from "axios";
+const API_URL = "https://equity-opal-agents.onrender.com";
 
-const API_URL = "http://127.0.0.1:8000"; // ✅ sin /chat
-
-export const sendMessage = async (message: string) => {
-  const payload = {
-    message,        // ✅ no "text"
-    session_id: "demo",
-  };
-
+export async function sendMessage(message: string) {
   try {
-    const res = await axios.post(`${API_URL}/chat`, payload, {
-      headers: { "Content-Type": "application/json" },
+    const response = await fetch(`${API_URL}/chat`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        message,
+      }),
     });
 
-    return res.data;
-  } catch (err) {
-    console.error("❌ Error conectando al backend:", err);
-    return { error: "Backend no disponible" };
+    if (!response.ok) {
+      throw new Error(`Error del servidor: ${response.status}`);
+    }
+
+    const data = await response.json();
+    return data; // { response: "texto del agente" }
+    
+  } catch (error) {
+    console.error("Error al llamar al backend:", error);
+    return { error: "No se pudo conectar con el servidor." };
   }
-};
+}

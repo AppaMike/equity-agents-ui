@@ -9,7 +9,7 @@ import { Separator } from "@/components/ui/separator";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Typewriter } from "react-simple-typewriter";
 
-export default function ChatWindow() {
+export default function ChatWindow({ agentName = "BRAVO" }: { agentName?: string }) {
   const [messages, setMessages] = useState<{ role: string; text: string }[]>([]);
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
@@ -45,11 +45,10 @@ export default function ChatWindow() {
 
         {/* ---- TÍTULO BRAVO ---- */}
         <h2 className="text-2xl font-bold mb-3 text-white text-center">
-          ⚡ BRAVO 
+          ⚡ {agentName}
         </h2>
 
         <div className="h-[400px] overflow-y-auto space-y-3 p-2 bg-zinc-800 rounded">
-
           {messages.map((msg, idx) => (
             <div
               key={idx}
@@ -57,15 +56,12 @@ export default function ChatWindow() {
                 msg.role === "user" ? "justify-end" : ""
               }`}
             >
-
-              {/* ---- AVATAR ---- */}
               <Avatar className="w-8 h-8">
                 <AvatarFallback>
-                  {msg.role === "user" ? "Tú" : "BR"}
+                  {msg.role === "user" ? "Tú" : agentName.slice(0, 2)}
                 </AvatarFallback>
               </Avatar>
 
-              {/* ---- BUBBLE ---- */}
               <div
                 className={`p-2 rounded max-w-[80%] ${
                   msg.role === "user"
@@ -73,11 +69,10 @@ export default function ChatWindow() {
                     : "bg-zinc-700 text-white"
                 }`}
               >
-                {/* Tipo “Bravo está escribiendo” */}
                 {msg.role === "assistant" &&
                 idx === messages.length - 1 &&
                 loading ? (
-                  <Typewriter words={["Bravo está pensando..."]} loop={1} cursor />
+                  <Typewriter words={[`${agentName} está pensando...`]} loop={1} cursor />
                 ) : (
                   msg.text
                 )}
@@ -92,7 +87,7 @@ export default function ChatWindow() {
           <Input
             value={input}
             onChange={(e) => setInput(e.target.value)}
-            placeholder="Escribe un mensaje para Bravo..."
+            placeholder={`Escribe un mensaje para ${agentName}...`}
             className="bg-zinc-800 border-zinc-600 text-white"
           />
           <Button onClick={handleSend} disabled={loading}>
